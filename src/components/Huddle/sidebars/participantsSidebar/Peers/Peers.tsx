@@ -28,10 +28,9 @@ const Peers: React.FC<PeersProps> = () => {
   // const requestedPeers = useStore((state) => state.requestedPeers);
 
   const { peerIds: hostPeerIds } = usePeerIds({ roles: [Role.HOST] });
-  // const { peerIds: coHostPeerIds } = usePeerIds({ roles: ["coHost"] });
+  const { peerIds: coHostPeerIds } = usePeerIds({ roles: [Role.CO_HOST] });
   // const { peerIds: speakerPeerIds } = usePeerIds({ roles: ["speaker"] });
   const { peerIds: listenerPeerIds } = usePeerIds({ roles: [Role.GUEST] });
-
 
   return (
     <div>
@@ -52,11 +51,11 @@ const Peers: React.FC<PeersProps> = () => {
         </PeerList>
       )}
       {/* Co-Hosts */}
-      {/* {(coHostPeerIds.length > 0 || me.role === Role.CO_HOST) && (
+      {(coHostPeerIds.length > 0 || me.role === Role.CO_HOST) && (
         <PeerList title="Co-Hosts">
           <CoHostsList className="mt-5" />
         </PeerList>
-      )} */}
+      )}
 
       {/* Speakers */}
       {/* {(speakerPeerIds.length > 0 || me.role === Role.SPEAKER) && (

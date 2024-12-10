@@ -46,10 +46,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json("Missing roomId", { status: 400 });
   }
 
-  if (!role) {
-    // return new Response("Missing role", { status: 400 });
-    return NextResponse.json("Missing role", { status: 400 });
-  }
+  // if (!role) {
+  //   // return new Response("Missing role", { status: 400 });
+  //   return NextResponse.json("Missing role", { status: 400 });
+  // }
 
   if (!displayName) {
     // return new Response("Missing displayName", { status: 400 });
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
 
     token = await createToken(
       roomId,
-      role === "host" ? Role.HOST : Role.GUEST,
+      previewPeers.length > 0 ? Role.GUEST : Role.HOST,
       displayName,
       address
     );

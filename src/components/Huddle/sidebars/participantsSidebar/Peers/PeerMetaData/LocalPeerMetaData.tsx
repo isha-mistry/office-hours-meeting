@@ -6,7 +6,11 @@ import HostData from "../PeerRole/HostData";
 import CoHostData from "../PeerRole/CoHostData";
 import SpeakerData from "../PeerRole/SpeakerData";
 import ListenersData from "../PeerRole/ListenersData";
-import { useLocalAudio, useLocalPeer } from "@huddle01/react/hooks";
+import {
+  useLocalAudio,
+  useLocalPeer,
+  useRemotePeer,
+} from "@huddle01/react/hooks";
 // import useStore from "@/components/store/slices";
 import { Role } from "@huddle01/server-sdk/auth";
 import { memo } from "react";
@@ -14,6 +18,7 @@ import clsx from "clsx";
 import { cn } from "@/utils/helpers";
 import { NestedPeerListIcons, PeerListIcons } from "@/utils/PeerListIcons";
 import { useStudioState } from "@/store/studioState";
+
 interface PeerMetaDatProps {
   isRequested?: boolean;
   className?: string;
@@ -44,6 +49,8 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
     stream: micStream,
     isAudioOn,
   } = useLocalAudio();
+
+  // const { peerId: remotePeerIds } = useRemotePeer({ peerId });
 
   // const removeRequestedPeers = useStore((state) => state.removeRequestedPeers);
 
@@ -100,7 +107,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
             ? NestedPeerListIcons.active.mic
             : NestedPeerListIcons.inactive.mic}
         </div>
-        {/* {role === "host" && ( */}
+        {/* {role !== "guest" && ( */}
         <div className="flex items-center cursor-pointer">
           <Dropdown
             triggerChild={<div>{NestedPeerListIcons.inactive.more}</div>}

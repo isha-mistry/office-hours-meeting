@@ -24,7 +24,7 @@ export const startRecording = async (
       }),
     };
 
-    const status = await fetchApi(`/startRecording/${roomId}`, requestOptions);
+    const status = await fetch(`/api/startRecording/${roomId}`, requestOptions);
     if (!status.ok) {
       console.error(`Request failed with status: ${status.status}`);
       toast.error("Failed to start recording");
@@ -60,7 +60,7 @@ export const handleStopRecording = async (
         roomId: roomId,
       }),
     };
-    const response = await fetch(`/stopRecording/${roomId}`, requestOptions);
+    const response = await fetch(`/api/stopRecording/${roomId}`, requestOptions);
     const data = await response.json();
 
     if (!response.ok) {
