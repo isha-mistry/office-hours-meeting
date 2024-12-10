@@ -207,7 +207,7 @@ export default function Component({ params }: { params: { roomId: string } }) {
           mediaDeviceKind: "cam",
         });
         if (stream) {
-          await enableVideo(stream);
+          await enableVideo({ customVideoStream: stream });
         }
       };
       changeVideo();
@@ -223,7 +223,7 @@ export default function Component({ params }: { params: { roomId: string } }) {
           mediaDeviceKind: "mic",
         });
         if (stream) {
-          enableAudio(stream);
+          enableAudio({ customAudioStream: stream });
         }
       };
       changeAudio();
@@ -241,7 +241,6 @@ export default function Component({ params }: { params: { roomId: string } }) {
   };
 
   const handleMeetingModalClose = async (result: boolean) => {
-    const token = await getAccessToken();
     if (role === "host") {
       setShowModal(false);
       const meetingData = {
@@ -616,7 +615,7 @@ export default function Component({ params }: { params: { roomId: string } }) {
                 </div>
                 <Link
                   // onClick={() => push(`/profile/${address}?active=info`)}
-                  href={`${APP_BASE_URL}`}
+                  href={`/meeting/session/${params.roomId}/lobby`}
                   className="px-6 py-3 bg-white text-blue-shade-200 rounded-full shadow-lg hover:bg-blue-shade-200 hover:text-white transition duration-300 ease-in-out"
                 >
                   Back to Profile

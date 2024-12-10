@@ -5,17 +5,11 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next-nprogress-bar";
 import { Toaster, toast } from "react-hot-toast";
 import { useHuddle01, useRoom, useLocalPeer } from "@huddle01/react/hooks";
-import { useAccount } from "wagmi";
-import { useWalletAddress } from "@/app/hooks/useWalletAddress";
-import { getAccessToken, usePrivy } from "@privy-io/react-auth";
 // import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Role } from "@huddle01/server-sdk/auth";
 import { Oval, RotatingLines } from "react-loader-spinner";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { useConnection } from "@/app/hooks/useConnection";
 import { fetchApi } from "@/utils/api";
-import ConnectWalletWithENS from "@/components/ConnectWallet/ConnectWalletWithENS";
 import { fetchEnsName } from "@/utils/ENSUtils";
 import { useStudioState } from "@/store/studioState";
 import arrow from "@/assets/images/instant-meet/arrow.svg";
@@ -24,7 +18,7 @@ import {
   updateAttendeeStatus,
   updateMeetingStatus,
 } from "@/utils/LobbyApiActions";
-import { APP_BASE_URL } from "@/config/constants";
+import { APP_BASE_URL, BASE_URL } from "@/config/constants";
 
 const Lobby = ({ params }: { params: { roomId: string } }) => {
   // State Management
@@ -47,15 +41,10 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
 
   // Hooks
   const { push } = useRouter();
-  const { address, isDisconnected } = useAccount();
   // const { openConnectModal } = useConnectModal();
-  const { login, authenticated } = usePrivy();
-  const { data: session } = useSession();
-  const { isConnected, isPageLoading, isSessionLoading, isReady } =
-    useConnection();
+
   const { state, joinRoom } = useRoom();
   const { name, setName, avatarUrl, setAvatarUrl } = useStudioState();
-  const { walletAddress } = useWalletAddress();
 
   // Connection Management
   // useEffect(() => {
@@ -69,134 +58,9 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
   //   }
   // }, [isConnected, isPageLoading, isSessionLoading]);
 
-  useEffect(() => {
-    if (!authenticated) {
-      login();
-    }
-  }, [authenticated, walletAddress]);
-
   // Verify Meeting ID
-  useEffect(() => {
-    const verifyMeetingId = async () => {
-      if (!params.roomId) return;
-      setIsApiCalling(true);
-      try {
-        const myHeaders = new Headers();
-        const token = await getAccessToken();
-        myHeaders.append("Content-Type", "application/json");
-        if (walletAddress) {
-          myHeaders.append("x-wallet-address", walletAddress);
-          myHeaders.append("Authorization", `Bearer ${token}`);
-        }
-
-        const response = await fetchApi("/verify-meeting-id", {
-          method: "POST",
-          headers: myHeaders,
-          body: JSON.stringify({
-            roomId: params.roomId,
-            meetingType: "session",
-          }),
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          const { data } = result;
-          setMeetingData(data);
-          setHostAddress(data.host_address);
-          setDaoName(data.dao_name);
-          setSessionType(data.session_type);
-          setHostJoinedStatus(data.host_joined_status);
-          setIsApiCalling(false);
-          if (data.session_type === "session") {
-            setAttendeeAddress(data.attendees[0]?.attendee_address);
-            setAttendeeJoinedStatus(data.attendees[0]?.attendee_joined_status);
-          }
-
-          // Handle meeting status
-          if (result.message === "Meeting has ended") {
-            setIsAllowToEnter(false);
-            setNotAllowedMessage(result.message);
-          } else if (result.message === "Meeting is upcoming") {
-            setMeetingStatus("Upcoming");
-            setIsAllowToEnter(true);
-          } else if (result.message === "Meeting has been denied") {
-            setIsAllowToEnter(false);
-            setNotAllowedMessage(result.message);
-          } else if (result.message === "Meeting does not exist") {
-            setIsAllowToEnter(false);
-            setNotAllowedMessage(result.message);
-          } else if (result.message === "Meeting is ongoing") {
-            setMeetingStatus("Ongoing");
-            setIsAllowToEnter(true);
-          }
-        } else {
-          setNotAllowedMessage(result.error || result.message);
-          setIsApiCalling(false);
-        }
-      } catch (error) {
-        console.error("Error verifying meeting:", error);
-        setNotAllowedMessage("Failed to verify meeting");
-        setIsApiCalling(false);
-      }
-    };
-
-    if (authenticated && walletAddress != null) {
-      verifyMeetingId();
-    }
-  }, [params.roomId, walletAddress, authenticated]);
 
   // Fetch Profile Details
-  useEffect(() => {
-    const fetchProfileDetails = async () => {
-      if (!isAllowToEnter || !authenticated) return;
-
-      try {
-        setIsLoadingProfile(true);
-        const token = await getAccessToken();
-        const response = await fetchApi(`/profile/${walletAddress}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-wallet-address": walletAddress ? walletAddress : "",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ walletAddress }),
-        });
-
-
-        const { data } = await response.json();
-
-        if (Array.isArray(data)) {
-          const profileWithName = data.find(
-            (profile) => profile.displayName !== ""
-          );
-          if (profileWithName) {
-            setProfileDetails(profileWithName);
-            if (profileWithName.image) {
-              setAvatarUrl(
-                `https://gateway.lighthouse.storage/ipfs/${profileWithName.image}`
-              );
-            }
-          }
-
-          // Set name from ENS or truncated address
-          const ensName = await fetchEnsName(walletAddress);
-          setName(
-            ensName?.ensName ||
-              truncateAddress(walletAddress ? walletAddress : "")
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        toast.error("Failed to load profile details");
-      } finally {
-        setIsLoadingProfile(false);
-      }
-    };
-
-    fetchProfileDetails();
-  }, [walletAddress, authenticated, isAllowToEnter]);
 
   // Handle Room State Change
   useEffect(() => {
@@ -206,30 +70,16 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
   }, [state, params.roomId, push]);
 
   const handleStartSpaces = async () => {
-    if (!authenticated) {
-      return toast("Connect your wallet to join the meeting!");
-    }
-
     try {
       setIsJoining(true);
-      const role = walletAddress === hostAddress ? "host" : "guest";
-      const privyToken = await getAccessToken();
 
       // Get room token
-      const tokenResponse = await fetchApi("/new-token", {
+      const tokenResponse = await fetch("/new-token", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(walletAddress && {
-            "x-wallet-address": walletAddress,
-            Authorization: `Bearer ${privyToken}`,
-          }),
-        },
+
         body: JSON.stringify({
           roomId: params.roomId,
-          role,
           displayName: name,
-          walletAddress,
         }),
       });
 
@@ -242,34 +92,8 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
       });
 
       // Update meeting status
-      if (Role.HOST) {
-        const commonData = {
-          callerAddress: walletAddress ?? "",
-          daoName,
-          sessionType,
-          hostAddress,
-          attendeeAddress,
-          hostJoinedStatus,
-          attendeeJoinedStatus,
-          meetingData,
-        };
-
-        await updateMeetingStatus(
-          params,
-          commonData,
-          walletAddress ?? "",
-          privyToken
-        );
-      }
 
       // Update attendee status if guest
-      if (role === "guest") {
-        await updateAttendeeStatus(
-          params.roomId,
-          walletAddress ?? "",
-          privyToken
-        );
-      }
     } catch (error) {
       console.error("Error starting spaces:", error);
       // toast.error("Failed to join meeting");
@@ -279,7 +103,7 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
   };
 
   // Render loading state
-  if (isPageLoading || isSessionLoading || isApiCalling) {
+  if (isApiCalling) {
     return (
       <div className="flex justify-center items-center h-screen bg-[#0a0a0a]">
         <RotatingLines
@@ -303,7 +127,7 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
             Oops, {notAllowedMessage}
           </div>
           <Link
-            href={`${APP_BASE_URL}/profile/${walletAddress}?active=info`}
+            href={`${BASE_URL}/meeting/session/${params.roomId}/lobby`}
             className="px-6 py-3 bg-[#2f2f2f] text-white rounded-full shadow-lg hover:bg-[#202020] transition duration-300"
           >
             Back to Profile
@@ -324,7 +148,6 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
                 <span className="text-white">Chora</span>
                 <span className="text-blue-shade-100">Club</span>
               </div>
-              <ConnectWalletWithENS />
             </div>
 
             <div className="flex w-full items-center justify-center my-auto px-4">

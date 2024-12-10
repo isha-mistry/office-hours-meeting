@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@huddle01/react": "^2.2.4",
-    "@huddle01/server-sdk": "^2.5.4",
+    "@huddle01/server-sdk": "^2.5.5",
     "@next/third-parties": "^15.0.4",
     "@nextui-org/react": "^2.6.5",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -28,6 +28,7 @@
     "interactjs": "^1.10.27",
     "lucide-react": "^0.468.0",
     "next": "15.0.4",
+    "next-nprogress-bar": "^2.3.15",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1",

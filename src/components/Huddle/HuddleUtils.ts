@@ -40,8 +40,8 @@ export const startRecording = async (
 
 export const handleStopRecording = async (
   roomId: string | undefined,
-  address: string | undefined,
-  token: string | undefined,
+  // address: string | undefined,
+  // token: string | undefined,
   setIsRecording: (val: boolean | null) => void
 ) => {
   if (!roomId) {
@@ -52,10 +52,7 @@ export const handleStopRecording = async (
   try {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    if (address) {
-      myHeaders.append("x-wallet-address", address);
-      myHeaders.append("Authorization", `Bearer ${token}`);
-    }
+
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -63,7 +60,7 @@ export const handleStopRecording = async (
         roomId: roomId,
       }),
     };
-    const response = await fetchApi(`/stopRecording/${roomId}`, requestOptions);
+    const response = await fetch(`/stopRecording/${roomId}`, requestOptions);
     const data = await response.json();
 
     if (!response.ok) {
@@ -171,8 +168,8 @@ export const handleCloseMeeting = async (
 
 export const handleRecording = async (
   roomId: string | undefined,
-  address: string | undefined,
-  privyToken: string | undefined,
+  // address: string | undefined,
+  // privyToken: string | undefined,
   isRecording: boolean | null,
   setIsRecording: (val: boolean | null) => void,
   meetingRecordingStatus: boolean,
@@ -180,7 +177,7 @@ export const handleRecording = async (
 ) => {
   if (meetingRecordingStatus) {
     setMeetingRecordingStatus(false);
-    handleStopRecording(roomId, address, privyToken, setIsRecording);
+    handleStopRecording(roomId, setIsRecording);
     let existingValue = sessionStorage.getItem("meetingData");
     if (existingValue) {
       let parsedValue = JSON.parse(existingValue);

@@ -20,9 +20,6 @@ import Dropdown from "../../ui/Dropdown";
 import Strip from "../sidebars/participantsSidebar/Peers/PeerRole/Strip";
 import { useEffect, useState } from "react";
 import { useParams, usePathname } from "next/navigation";
-import { useAccount } from "wagmi";
-import { useWalletAddress } from "@/app/hooks/useWalletAddress";
-import { getAccessToken } from "@privy-io/react-auth";
 import { PiLinkSimpleBold } from "react-icons/pi";
 import { opBlock, arbBlock } from "@/config/staticDataUtils";
 import ReactionBar from "../ReactionBar";
@@ -39,7 +36,7 @@ import {
   handleStopRecording,
 } from "../HuddleUtils";
 import { APP_BASE_URL, BASE_URL } from "@/config/constants";
-import { uploadFile } from "@/actions/uploadFile";
+// import { uploadFile } from "@/actions/uploadFile";
 import { fetchApi } from "@/utils/api";
 import MobileMenuDropdown from "./MobileMenuDropdown";
 
@@ -67,10 +64,7 @@ const BottomBar = ({
 
   const roomId = params.roomId as string | undefined;
   const [s3URL, setS3URL] = useState<string>("");
-  const { chain } = useAccount();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { address } = useAccount();
-  const { walletAddress } = useWalletAddress();
   const [privypass, setPrivyToken] = useState("");
   const {
     role,
@@ -107,49 +101,12 @@ const BottomBar = ({
       },
     });
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      const token = await getAccessToken();
-      if (token) {
-        setPrivyToken(token);
-      }
-    };
-
-    fetchToken();
-  }, [walletAddress]); // Empty dependency array ensures this runs only once.
-
   useDataMessage({
     async onMessage(payload, from, label) {
       if (label === "server-message") {
         const { s3URL } = JSON.parse(payload);
         const videoUri = s3URL;
         setS3URL(videoUri);
-
-        const myHeaders = new Headers();
-        const token = await getAccessToken();
-        myHeaders.append("Content-Type", "application/json");
-        if (walletAddress) {
-          myHeaders.append("x-wallet-address", walletAddress);
-          myHeaders.append("Authorization", `Bearer ${token}`);
-        }
-
-        const raw = JSON.stringify({
-          meetingId: roomId,
-          video_uri: videoUri,
-        });
-
-        const requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          body: raw,
-        };
-
-        try {
-          const response = await fetchApi("/update-video-uri", requestOptions);
-          const result = await response.json();
-        } catch (error) {
-          console.error(error);
-        }
       }
     },
   });
@@ -175,8 +132,8 @@ const BottomBar = ({
     if (role === "host" && meetingRecordingStatus === true) {
       await handleStopRecording(
         roomId,
-        walletAddress ?? "",
-        privypass,
+        // walletAddress ?? "",
+        // privypass,
         setIsRecording
       );
     }
@@ -188,104 +145,12 @@ const BottomBar = ({
       setShowLeaveDropDown(false);
     } else if (endMeet === "close") {
       if (role === "host") {
-        let nft_image;
-        try {
-          const myHeaders = new Headers();
-          myHeaders.append("Content-Type", "application/json");
-          const requestOptions = {
-            method: "GET",
-            headers: myHeaders,
-          };
-          const imageResponse = await fetch(
-            `${BASE_URL}/api/images/og/nft?daoName=${daoName}&meetingId=${roomId}`,
-            requestOptions
-          );
-
-          try {
-            const arrayBuffer = await imageResponse.arrayBuffer();
-            const result = await uploadFile(arrayBuffer, daoName, roomId);
-            nft_image = `ipfs://` + result.Hash;
-          } catch (error) {
-            console.error("Error in uploading file:", error);
-          }
-        } catch (error) {
-          console.log("Error in generating OG image:::", error);
-        }
-        try {
-          const myHeaders = new Headers();
-          const token = await getAccessToken();
-          myHeaders.append("Content-Type", "application/json");
-          if (walletAddress) {
-            myHeaders.append("x-wallet-address", walletAddress);
-            myHeaders.append("Authorization", `Bearer ${token}`);
-          }
-          const requestOptions = {
-            method: "PUT",
-            headers: myHeaders,
-            body: JSON.stringify({
-              meetingId: roomId,
-              meetingType: meetingCategory,
-              recordedStatus: isRecording,
-              meetingStatus: isRecording === true ? "Recorded" : "Finished",
-              nft_image: nft_image,
-              daoName: daoName,
-            }),
-          };
-
-          const response = await fetchApi(
-            `/update-recording-status`,
-            requestOptions
-          );
-          if (role === "host") {
-            setTimeout(async () => {
-              await handleCloseMeeting(
-                walletAddress ?? "",
-                token,
-                meetingCategory,
-                roomId,
-                daoName,
-                hostAddress,
-                meetingData,
-                isRecording
-              );
-            }, 4000);
-          }
-        } catch (e) {
-          console.log("Error: ", e);
-        }
+        closeRoom();
       }
-      closeRoom();
       setIsLoading(false);
       setShowLeaveDropDown(false);
     } else {
       return;
-    }
-
-    if (meetingCategory === "officehours") {
-      const myHeaders = new Headers();
-      const token = await getAccessToken();
-      myHeaders.append("Content-Type", "application/json");
-      if (walletAddress) {
-        myHeaders.append("x-wallet-address", walletAddress);
-        myHeaders.append("Authorization", `Bearer ${token}`);
-      }
-      try {
-        const res = await fetch(
-          `${APP_BASE_URL}/api/update-office-hours/${hostAddress}`,
-          {
-            method: "PUT",
-            headers: myHeaders,
-          }
-        );
-        const res_data = await res.json();
-
-        // if (res_data.success) {
-        toast.success("Next Office hour is scheduled!");
-
-        // }
-      } catch (e) {
-        console.log("error: ", e);
-      }
     }
   };
 
@@ -371,7 +236,7 @@ const BottomBar = ({
                 displayName: metadata?.displayName || "",
                 avatarUrl: metadata?.avatarUrl || "",
                 isHandRaised: !metadata?.isHandRaised,
-                walletAddress: metadata?.walletAddress || walletAddress || "",
+                walletAddress: metadata?.walletAddress || "",
               });
             }}
             className={clsx(
@@ -429,7 +294,7 @@ const BottomBar = ({
                 displayName: metadata?.displayName || "",
                 avatarUrl: metadata?.avatarUrl || "",
                 isHandRaised: !metadata?.isHandRaised,
-                walletAddress: metadata?.walletAddress || address || "",
+                walletAddress: metadata?.walletAddress || "",
               });
             }}
             onToggleChat={() => setIsChatOpen(!isChatOpen)}
@@ -469,8 +334,8 @@ const BottomBar = ({
             onClick={() =>
               handleRecording(
                 roomId,
-                walletAddress ?? "",
-                privypass,
+                // walletAddress ?? "",
+                // privypass,
                 isRecording,
                 setIsRecording,
                 meetingRecordingStatus,
@@ -490,8 +355,8 @@ const BottomBar = ({
               onClick={() =>
                 handleRecording(
                   roomId,
-                  walletAddress ?? "",
-                  privypass,
+                  // walletAddress ?? "",
+                  // privypass,
                   isRecording,
                   setIsRecording,
                   meetingRecordingStatus,

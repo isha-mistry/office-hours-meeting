@@ -149,10 +149,10 @@
     axios "^1.7.7"
     react "18.2.0"
 
-"@huddle01/server-sdk@^2.5.4":
-  version "2.5.4"
-  resolved "https://registry.yarnpkg.com/@huddle01/server-sdk/-/server-sdk-2.5.4.tgz#4019ffc8eaee5f71a17f6023b7111e17a2152594"
-  integrity sha512-AJhMSNhzPRBRzEVynMwzAGCRZjrlY3HwAl2vFB1CDERLFh0LfZdAPfC5Ywjz2mDJOrh1R5gx8f6eNVFhwFK4pg==
+"@huddle01/server-sdk@^2.5.5":
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/@huddle01/server-sdk/-/server-sdk-2.5.5.tgz#afb71b2e709bc6ae07278c86eedc319c9ea8cb13"
+  integrity sha512-ws8xAhlAkcQrmmGHfraHd70N0sUUsxJEBUPpWlW1w4dIFLCU9NmQXgplSj1RH/idQgvHzEArabnlQaoCZA9rWA==
   dependencies:
     hono "^4.6.9"
     jose "^5.9.3"
@@ -4659,6 +4659,13 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
+next-nprogress-bar@^2.3.15:
+  version "2.3.15"
+  resolved "https://registry.yarnpkg.com/next-nprogress-bar/-/next-nprogress-bar-2.3.15.tgz#a7d22147cd60aef7b1e84472d9edee36166b839e"
+  integrity sha512-8s8slKMUXvDrl7wWzKyWt6BJQThOJREpCicdbi66xAOzQ23DeIauEzMGPg1BMixnqlIRY3ayUO/ey9dafkgWcA==
+  dependencies:
+    nprogress "^0.2.0"
+
 next@15.0.4:
   version "15.0.4"
   resolved "https://registry.yarnpkg.com/next/-/next-15.0.4.tgz#7ddad7299204f16c132d7e524cf903f1a513588e"
@@ -4691,6 +4698,11 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
+
+nprogress@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/nprogress/-/nprogress-0.2.0.tgz#cb8f34c53213d895723fcbab907e9422adbcafb1"
+  integrity sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==
 
 object-assign@^4.0.1, object-assign@^4.1.1:
   version "4.1.1"
