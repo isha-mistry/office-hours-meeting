@@ -60,7 +60,10 @@ export const handleStopRecording = async (
         roomId: roomId,
       }),
     };
-    const response = await fetch(`/api/stopRecording/${roomId}`, requestOptions);
+    const response = await fetch(
+      `/api/stopRecording/${roomId}`,
+      requestOptions
+    );
     const data = await response.json();
 
     if (!response.ok) {
@@ -178,9 +181,9 @@ export const handleRecording = async (
   if (meetingRecordingStatus) {
     setMeetingRecordingStatus(false);
     handleStopRecording(roomId, setIsRecording);
-    let existingValue = sessionStorage.getItem("meetingData");
+    const existingValue = sessionStorage.getItem("meetingData");
     if (existingValue) {
-      let parsedValue = JSON.parse(existingValue);
+      const parsedValue = JSON.parse(existingValue);
       parsedValue.recordingStatus = false;
 
       // Step 3: Store the updated value back in sessionStorage
@@ -195,9 +198,9 @@ export const handleRecording = async (
       // address ? address : "",
       // privyToken ? privyToken : ""
     );
-    let existingValue = sessionStorage.getItem("meetingData");
+    const existingValue = sessionStorage.getItem("meetingData");
     if (existingValue) {
-      let parsedValue = JSON.parse(existingValue);
+      const parsedValue = JSON.parse(existingValue);
       if (parsedValue.meetingId === roomId) {
         if (parsedValue.isMeetingRecorded === false) {
           parsedValue.isMeetingRecorded = true;

@@ -1,31 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next-nprogress-bar";
-import { Toaster, toast } from "react-hot-toast";
-import { useHuddle01, useRoom, useLocalPeer } from "@huddle01/react/hooks";
+import { useRoom } from "@huddle01/react/hooks";
 // import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { Role } from "@huddle01/server-sdk/auth";
-import { Oval, RotatingLines } from "react-loader-spinner";
-import Link from "next/link";
-import { fetchApi } from "@/utils/api";
 // import { fetchEnsName } from "@/utils/ENSUtils";
 import { useStudioState } from "@/store/studioState";
 // import arrow from "@/assets/images/instant-meet/arrow.svg";
-import { truncateAddress } from "@/utils/text";
-import {
-  updateAttendeeStatus,
-  updateMeetingStatus,
-} from "@/utils/LobbyApiActions";
-import { APP_BASE_URL, BASE_URL } from "@/config/constants";
 import { useParams } from "next/navigation";
-
-interface PageProps {
-  params: {
-    roomId: string;
-  };
-}
 
 const Lobby = () => {
   // State Management
@@ -37,28 +20,13 @@ const Lobby = () => {
   console.log("roomID::::: ", roomId);
 
   const [isJoining, setIsJoining] = useState(false);
-  const [meetingStatus, setMeetingStatus] = useState<string>();
-  const [isAllowToEnter, setIsAllowToEnter] = useState(false);
-  const [notAllowedMessage, setNotAllowedMessage] = useState<string>();
-  const [profileDetails, setProfileDetails] = useState<any>();
-  const [meetingData, setMeetingData] = useState<any>();
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
-
-  // Meeting Details State
-  const [hostAddress, setHostAddress] = useState<string>();
-  const [daoName, setDaoName] = useState<string>();
-  const [sessionType, setSessionType] = useState<string>();
-  const [attendeeAddress, setAttendeeAddress] = useState<string>();
-  const [hostJoinedStatus, setHostJoinedStatus] = useState<string>();
-  const [attendeeJoinedStatus, setAttendeeJoinedStatus] = useState<string>();
-  const [isApiCalling, setIsApiCalling] = useState<boolean>();
 
   // Hooks
   const { push } = useRouter();
   // const { openConnectModal } = useConnectModal();
 
   const { state, joinRoom } = useRoom();
-  const { name, setName, avatarUrl, setAvatarUrl } = useStudioState();
+  const { name, setName, avatarUrl } = useStudioState();
 
   // Connection Management
   // useEffect(() => {
@@ -81,7 +49,7 @@ const Lobby = () => {
     if (state === "connected") {
       push(`/meeting/session/${roomId}`);
     }
-  }, [state]);
+  }, [state, push, roomId]);
 
   const handleStartSpaces = async () => {
     try {
@@ -118,41 +86,6 @@ const Lobby = () => {
       setIsJoining(false);
     }
   };
-
-  // Render loading state
-  if (isApiCalling) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-[#0a0a0a]">
-        <RotatingLines
-          strokeColor="#0356fc"
-          strokeWidth="5"
-          animationDuration="0.75"
-          width="60"
-          visible={true}
-        />
-      </div>
-    );
-  }
-
-  // Render not allowed message
-  if (!isAllowToEnter && notAllowedMessage) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-[#0a0a0a] text-white">
-        <div className="text-center">
-          <div className="text-6xl mb-6">☹️</div>
-          <div className="text-lg font-semibold mb-8">
-            Oops, {notAllowedMessage}
-          </div>
-          <Link
-            href={`${BASE_URL}/meeting/session/${roomId}/lobby`}
-            className="px-6 py-3 bg-[#2f2f2f] text-white rounded-full shadow-lg hover:bg-[#202020] transition duration-300"
-          >
-            Back to Profile
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   // Render main lobby
   return (
@@ -233,20 +166,12 @@ const Lobby = () => {
               <div className="flex items-center w-full sm:w-2/3 lg:w-1/2 px-4 sm:px-0">
                 <button
                   className={`flex items-center justify-center w-full py-3 sm:py-4 px-4 sm:px-6 mt-4 text-white font-bold text-lg rounded-full transition-all duration-300
-                  ${
-                    isLoadingProfile
-                      ? "bg-gray-700"
-                      : "bg-gradient-to-r from-blue-800 to-blue-600 hover:from-blue-900 hover:to-blue-700"
-                  }
-                  ${
-                    isLoadingProfile || isJoining
-                      ? "cursor-not-allowed"
-                      : "cursor-pointer"
-                  }
+                  ${"bg-gradient-to-r from-blue-800 to-blue-600 hover:from-blue-900 hover:to-blue-700"}
+                  ${isJoining ? "cursor-not-allowed" : "cursor-pointer"}
                   transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl
                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                   onClick={handleStartSpaces}
-                  disabled={isLoadingProfile || isJoining}
+                  disabled={isJoining}
                 >
                   <span className="mr-2">
                     {isJoining ? "Joining Spaces..." : "Start Meeting"}

@@ -12,9 +12,6 @@ import {
   useLocalScreenShare,
   useLocalVideo,
   usePeerIds,
-  useRemoteAudio,
-  useRemotePeer,
-  useRemoteScreenShare,
   useRoom,
 } from "@huddle01/react/hooks";
 import {
@@ -52,21 +49,19 @@ import {
   handleCloseMeeting,
   startRecording,
 } from "@/components/Huddle/HuddleUtils";
-import { APP_BASE_URL, BASE_URL } from "@/config/constants";
-import { fetchApi } from "@/utils/api";
-import { Fullscreen, Maximize2, Minimize2 } from "lucide-react";
-import Audio from "@/components/Huddle/Media/Audio";
+import { BASE_URL } from "@/config/constants";
+import { Maximize2, Minimize2 } from "lucide-react";
 import AudioController from "@/components/Huddle/Media/AudioController";
-
-interface PageProps {
-  params: {
-    roomId: string;
-  };
-}
 
 export default function Component() {
   const params = useParams();
   const roomId = params?.roomId as string;
+
+  const { state } = useRoom({
+    onLeave: () => {
+      push(`/meeting/session/${roomId}/lobby`);
+    },
+  });
 
   const { isVideoOn, enableVideo, disableVideo, stream } = useLocalVideo();
   const {
@@ -87,12 +82,9 @@ export default function Component() {
     isChatOpen,
     isParticipantsOpen,
     addChatMessage,
-    activeBg,
     videoDevice,
     audioInputDevice,
-    layout,
     isScreenShared,
-    setIsScreenShared,
     avatarUrl,
     isRecording,
     setIsRecording,
@@ -104,14 +96,9 @@ export default function Component() {
     roles: [Role.HOST, Role.GUEST],
   });
   const [isCopied, setIsCopied] = useState(false);
-  const router = useRouter();
   const { peerId } = useLocalPeer();
   const { metadata, role } = useLocalPeer<PeerMetadata>();
-  const { videoTrack, shareStream } = useLocalScreenShare();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [hostModalOpen, setHostModalOpen] = useState(false);
-  const [hostAddress, setHostAddress] = useState<any>();
-  const [daoName, setDaoName] = useState<any>();
+  const { shareStream } = useLocalScreenShare();
   const { push } = useRouter();
   const path = usePathname();
   const [isAllowToEnter, setIsAllowToEnter] = useState<boolean>();
@@ -119,7 +106,6 @@ export default function Component() {
   const [videoStreamTrack, setVideoStreamTrack] = useState<any>("");
   const [showFeedbackPopups, setShowFeedbackPopups] = useState(false);
   const [showModal, setShowModal] = useState(true);
-  const [meetingData, setMeetingData] = useState<any>();
   const { sendData } = useDataMessage();
   const meetingCategory = usePathname().split("/")[2];
   const [isLessScreen, setIsLessScreen] = useState(false);
@@ -208,6 +194,20 @@ export default function Component() {
   }, [stream]);
 
   useEffect(() => {
+    if (state === "idle") {
+      push(`/meeting/session/${roomId}/lobby`);
+      return;
+    }
+
+    updateMetadata({
+      displayName: name,
+      avatarUrl: avatarUrl,
+      isHandRaised: metadata?.isHandRaised || false,
+      walletAddress: "",
+    });
+  }, []);
+
+  useEffect(() => {
     setCamPrefferedDevice(videoDevice.deviceId);
     if (isVideoOn) {
       disableVideo();
@@ -279,13 +279,7 @@ export default function Component() {
       {/* {isAllowToEnter ? ( */}
       <div
         className={clsx(
-          `flex flex-col h-screen font-poppins bg-contain bg-center bg-no-repeat ${
-            daoName === "optimism"
-              ? "bg-op-profile"
-              : daoName === "arbitrum"
-              ? "bg-arb-profile"
-              : null
-          }`
+          `flex flex-col h-screen font-poppins bg-contain bg-center bg-no-repeat `
         )}
       >
         <div className="bg-[#0a0a0a] flex flex-col h-screen">
@@ -621,12 +615,12 @@ export default function Component() {
             {isParticipantsOpen && <ParticipantsBar />}
           </main>
           <BottomBar
-            daoName={daoName}
-            hostAddress={hostAddress}
+            // daoName={daoName}
+            // hostAddress={hostAddress}
             // meetingStatus={meetingRecordingStatus}
             // currentRecordingStatus={currentRecordingState}
-            meetingData={meetingData}
-            meetingCategory={meetingCategory}
+            // meetingData={meetingData}
+            // meetingCategory={meetingCategory}
           />
           <AudioController />
         </div>

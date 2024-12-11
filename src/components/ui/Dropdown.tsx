@@ -2,6 +2,7 @@ import React from "react";
 
 // Radix ui
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { JSX } from "react/jsx-runtime";
 
 type DropdownProps = {
   align?: "center" | "start" | "end";

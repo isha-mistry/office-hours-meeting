@@ -40,7 +40,7 @@ const createToken = async (
 };
 
 export async function POST(req: NextRequest) {
-  const { roomId, role, displayName, address } = await req.json();
+  const { roomId, displayName, address } = await req.json();
 
   if (!roomId) {
     return NextResponse.json("Missing roomId", { status: 400 });
@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
       address
     );
   } catch (error) {
+    console.log("roomId: ", error);
     token = await createToken(roomId, Role.HOST, displayName, address);
   }
 

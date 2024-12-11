@@ -1,12 +1,11 @@
 "use client";
-import Image from "next/image";
 import { useRouter } from "next-nprogress-bar";
 
 export default function Home() {
   const router = useRouter();
 
   const startMeet = async () => {
-    let getHeaders = new Headers();
+    const getHeaders = new Headers();
     getHeaders.append("Content-Type", "application/json");
 
     const res = await fetch(`/api/create-room`, {

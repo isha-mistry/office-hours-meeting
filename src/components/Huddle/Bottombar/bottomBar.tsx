@@ -12,66 +12,29 @@ import { Button } from "@/components/ui/button";
 import { BasicIcons } from "@/utils/BasicIcons";
 import { useStudioState } from "@/store/studioState";
 import ButtonWithIcon from "../../ui/buttonWithIcon";
-import { Role } from "@huddle01/server-sdk/auth";
 import { PeerMetadata } from "@/utils/types";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import Dropdown from "../../ui/Dropdown";
 import Strip from "../sidebars/participantsSidebar/Peers/PeerRole/Strip";
 import { useEffect, useState } from "react";
-import { useParams, usePathname } from "next/navigation";
-import { PiLinkSimpleBold } from "react-icons/pi";
-import { opBlock, arbBlock } from "@/config/staticDataUtils";
+import { useParams } from "next/navigation";
 import ReactionBar from "../ReactionBar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "../../ui/dropdown-menu";
-import { SessionInterface } from "@/types/MeetingTypes";
 import QuickLinks from "./QuickLinks";
-import {
-  handleCloseMeeting,
-  handleRecording,
-  handleStopRecording,
-} from "../HuddleUtils";
-import { APP_BASE_URL, BASE_URL } from "@/config/constants";
+import { handleRecording, handleStopRecording } from "../HuddleUtils";
 // import { uploadFile } from "@/actions/uploadFile";
-import { fetchApi } from "@/utils/api";
 import MobileMenuDropdown from "./MobileMenuDropdown";
 
-const BottomBar = ({
-  daoName,
-  hostAddress,
-  // meetingStatus,
-  // currentRecordingStatus,
-  meetingData,
-  meetingCategory,
-}: {
-  daoName: string;
-  hostAddress: string;
-  // meetingStatus: boolean | undefined;
-  // currentRecordingStatus: boolean | undefined;
-  meetingData?: SessionInterface;
-  meetingCategory: string;
-}) => {
+const BottomBar = () => {
   const { isAudioOn, enableAudio, disableAudio } = useLocalAudio();
   const { isVideoOn, enableVideo, disableVideo } = useLocalVideo();
   const [showLeaveDropDown, setShowLeaveDropDown] = useState<boolean>(false);
-  const { leaveRoom, closeRoom, room } = useRoom();
+  const { leaveRoom, closeRoom } = useRoom();
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
 
   const roomId = params.roomId as string | undefined;
-  const [s3URL, setS3URL] = useState<string>("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [privypass, setPrivyToken] = useState("");
-  const {
-    role,
-    metadata,
-    updateMetadata,
-    peerId: localPeerId,
-  } = useLocalPeer<PeerMetadata>();
+  const { role, metadata, updateMetadata } = useLocalPeer<PeerMetadata>();
   const { peerIds } = usePeerIds({ roles: ["host", "guest"] });
 
   const {
@@ -106,7 +69,7 @@ const BottomBar = ({
       if (label === "server-message") {
         const { s3URL } = JSON.parse(payload);
         const videoUri = s3URL;
-        setS3URL(videoUri);
+        console.log("video uri: ", videoUri);
       }
     },
   });
@@ -155,7 +118,7 @@ const BottomBar = ({
   };
 
   const handleCopyInviteLink = () => {
-    const meetingLink = `${window.location.origin}/${daoName}/spaces/${roomId}`;
+    const meetingLink = `${window.location.origin}/meeting/session/${roomId}/lobby`;
     navigator.clipboard.writeText(meetingLink);
     toast.success("Meeting link copied to clipboard!");
   };
@@ -164,7 +127,7 @@ const BottomBar = ({
     <>
       <footer className="flex items-center justify-center lg:justify-between pl-2 pr-4 sm:px-4 py-2 font-poppins bg-[#0a0a0a] lg:bg-transparent z-10">
         <div className="">
-          <QuickLinks daoName={daoName} />
+          <QuickLinks daoName={"optimism"} />
         </div>
 
         <div className={clsx("flex space-x-2 sm:space-x-3")}>

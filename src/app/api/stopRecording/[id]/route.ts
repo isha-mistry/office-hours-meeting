@@ -1,18 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Recorder } from "@huddle01/server-sdk/recorder";
 
-interface Recordings {
-  url: any;
-  id: string;
-  recordingUrl?: string;
-  recordingSize: number;
-}
-
 export async function POST(
-  request: Request,
-  res: NextResponse
+  req: NextRequest,
+  context: {
+    params: { id: string };
+  }
 ): Promise<void | Response> {
-  const roomId = request.url.split("stopRecording/")[1];
+  const { id: roomId } = context.params;
 
   if (!process.env.NEXT_PUBLIC_PROJECT_ID || !process.env.NEXT_PUBLIC_API_KEY) {
     return NextResponse.json(

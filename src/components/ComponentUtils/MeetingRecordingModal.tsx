@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React from "react";
 import { MdCancel } from "react-icons/md";
 // import record from "@/assets/images/instant-meet/record.svg";

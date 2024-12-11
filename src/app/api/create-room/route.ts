@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 export const revalidate = 0;
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
   try {
     const response = await fetch(
       "https://api.huddle01.com/api/v1/create-room",
