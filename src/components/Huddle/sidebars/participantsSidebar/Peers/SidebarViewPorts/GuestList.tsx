@@ -8,13 +8,13 @@ interface ListenersListProps {
   className?: string;
 }
 
-const ListnersList: FC<ListenersListProps> = ({ className }) => {
-  const { peerIds } = usePeerIds({ roles: ["listener"] });
+const GuestList: FC<ListenersListProps> = ({ className }) => {
+  const { peerIds } = usePeerIds({ roles: [Role.GUEST] });
   const { peerId: localPeerId, role: localPeerRole } = useLocalPeer();
 
   return (
     <>
-      {localPeerRole === Role.LISTENER && localPeerId && (
+      {localPeerRole === Role.GUEST && localPeerId && (
         <LocalPeerMetaData
           key={`sidebar-${localPeerId}`}
           className={className}
@@ -33,4 +33,4 @@ const ListnersList: FC<ListenersListProps> = ({ className }) => {
   );
 };
 
-export default ListnersList;
+export default GuestList;

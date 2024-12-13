@@ -29,7 +29,7 @@ const CoHostData: React.FC<CoHostDataProps> = ({ peerId }) => {
             variant="danger"
             onClick={() => {
               if (me.role === "host" || me.role === "coHost") {
-                updateRole(Role.GUEST);
+                updateRole(Role.LISTENER);
               }
             }}
           />
@@ -58,7 +58,7 @@ const CoHostData: React.FC<CoHostDataProps> = ({ peerId }) => {
             title="Leave co-host role"
             variant="danger"
             onClick={() => {
-              me.updateRole({ role: "guest" });
+              me.updateRole({ role: "listener" });
             }}
           />
         </div>

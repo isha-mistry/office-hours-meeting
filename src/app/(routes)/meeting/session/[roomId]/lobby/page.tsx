@@ -76,13 +76,13 @@ const Lobby = () => {
         token,
       });
 
+      setIsJoining(false);
       // Update meeting status
 
       // Update attendee status if guest
     } catch (error) {
       console.error("Error starting spaces:", error);
       // toast.error("Failed to join meeting");
-    } finally {
       setIsJoining(false);
     }
   };

@@ -93,7 +93,7 @@ export default function Component() {
   } = useStudioState();
   const videoRef = useRef<HTMLVideoElement>(null);
   const { peerIds } = usePeerIds({
-    roles: [Role.HOST, Role.GUEST],
+    roles: [Role.HOST, Role.GUEST, Role.CO_HOST, Role.LISTENER, Role.SPEAKER],
   });
   const [isCopied, setIsCopied] = useState(false);
   const { peerId } = useLocalPeer();
@@ -272,7 +272,7 @@ export default function Component() {
     }
   };
 
-  console.log("avatar url: ", avatarUrl);
+  // console.log("avatar url: ", avatarUrl);
 
   return (
     <>
@@ -615,12 +615,12 @@ export default function Component() {
             {isParticipantsOpen && <ParticipantsBar />}
           </main>
           <BottomBar
-            // daoName={daoName}
-            // hostAddress={hostAddress}
-            // meetingStatus={meetingRecordingStatus}
-            // currentRecordingStatus={currentRecordingState}
-            // meetingData={meetingData}
-            // meetingCategory={meetingCategory}
+          // daoName={daoName}
+          // hostAddress={hostAddress}
+          // meetingStatus={meetingRecordingStatus}
+          // currentRecordingStatus={currentRecordingState}
+          // meetingData={meetingData}
+          // meetingCategory={meetingCategory}
           />
           <AudioController />
         </div>

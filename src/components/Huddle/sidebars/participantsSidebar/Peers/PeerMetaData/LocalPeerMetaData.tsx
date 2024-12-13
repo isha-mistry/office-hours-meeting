@@ -18,6 +18,7 @@ import clsx from "clsx";
 import { cn } from "@/utils/helpers";
 import { NestedPeerListIcons, PeerListIcons } from "@/utils/PeerListIcons";
 import { useStudioState } from "@/store/studioState";
+import GuestData from "../PeerRole/GuestData";
 
 interface PeerMetaDatProps {
   isRequested?: boolean;
@@ -41,6 +42,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
     coHost: peerId && <CoHostData peerId={peerId} />,
     speaker: peerId && <SpeakerData peerId={peerId} />,
     listener: peerId && <ListenersData peerId={peerId} />,
+    guest: peerId && <GuestData peerId={peerId} />,
   } as const;
 
   const {
@@ -97,7 +99,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
         </div>
         <div
           onClick={() => {
-            if (role && ["host", "guest"].includes(role)) {
+            if (role && ["host", "guest", "speaker", "listener", "coHost"].includes(role)) {
               isAudioOn ? disableAudio() : enableAudio();
             }
           }}

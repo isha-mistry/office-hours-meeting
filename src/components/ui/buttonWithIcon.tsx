@@ -21,7 +21,7 @@ const ButtonWithIcon = ({
       showArrow
       content={content}
       placement="top"
-      className="rounded-md bg-opacity-90 max-w-96"
+      className="rounded-md bg-opacity-90 max-w-96 text-gray-800"
       closeDelay={1}
     >
       <button

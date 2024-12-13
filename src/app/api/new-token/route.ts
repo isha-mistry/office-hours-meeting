@@ -60,9 +60,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await fetch(
-      `https://api.huddle01.com/api/v1/live-meeting/preview-peers?roomId=${roomId}`,
+      `https://api.huddle01.com/api/v1/live-meetings/preview-peers?roomId=${roomId}`,
       {
         headers: {
+          "Content-Type": "application/json",
           "x-api-key": process.env.NEXT_PUBLIC_API_KEY ?? "",
         },
       }
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     token = await createToken(
       roomId,
-      previewPeers.length > 0 ? Role.GUEST : Role.HOST,
+      previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
       displayName,
       address
     );

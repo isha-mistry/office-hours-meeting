@@ -8,46 +8,45 @@ import {
 } from "@huddle01/react/hooks";
 import { Role } from "@huddle01/server-sdk/auth";
 
-type ListenersDataProps = {
+type GuestDataProps = {
   peerId: string;
 };
 
-const ListenersData: React.FC<ListenersDataProps> = ({ peerId }) => {
+const GuestData: React.FC<GuestDataProps> = ({ peerId }) => {
   const { leaveRoom, kickPeer } = useRoom();
   const { updateRole } = useRemotePeer({ peerId });
   const me = useLocalPeer();
-  console.log("role: ", me.role);
 
   return (
     <>
       {/* {me.role === "host" && (
-      <div>
-        <Strip
-          type="personNormal"
-          title="Invite as Co-Host"
-          variant="normal"
-          onClick={() => {
-            updateRole(Role.CO_HOST);
-          }}
-        />
-      </div>
-    )} */}
-      {me.role === "host" && (
         <div>
           <Strip
-            type="personSpeaker"
-            title="Invite as Speaker"
+            type="personNormal"
+            title="Invite as Co-Host"
             variant="normal"
             onClick={() => {
-              updateRole(Role.SPEAKER);
+              updateRole(Role.CO_HOST);
             }}
           />
+        </div>
+      )} */}
+      {me.role === "host" && (
+        <div>
+          {/* <Strip
+              type="personSpeaker"
+              title="Invite as Speaker"
+              variant="normal"
+              onClick={() => {
+                updateRole(Role.SPEAKER);
+              }}
+            /> */}
 
           <Strip
             title="Invite as Co-Host"
             variant="normal"
             onClick={() => updateRole(Role.CO_HOST)}
-            type="personNormal"
+            type="personSpeaker"
           />
 
           <Strip
@@ -59,17 +58,19 @@ const ListenersData: React.FC<ListenersDataProps> = ({ peerId }) => {
         </div>
       )}
 
-      {me.role === Role.LISTENER && me.peerId === peerId && (
+      {me.role === "guest" && me.peerId === peerId && (
         <div>
           <Strip
             type="leave"
-            title="Leave the spaces"
+            title="Remove from spaces"
             variant="danger"
-            onClick={leaveRoom}
+            onClick={() => {
+              kickPeer(peerId);
+            }}
           />
         </div>
       )}
     </>
   );
 };
-export default ListenersData;
+export default GuestData;

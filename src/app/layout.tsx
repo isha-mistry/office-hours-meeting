@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import HuddleContextProvider from "@/context/HuddleContextProvider";
 import { Suspense } from "react";
+import ProgressBarProvider from "@/components/ProgressBarProvider/ProgressBarProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,9 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Suspense>
-          <HuddleContextProvider>{children}</HuddleContextProvider>
-        </Suspense>
+        <ProgressBarProvider>
+          <Suspense>
+            <HuddleContextProvider>{children}</HuddleContextProvider>
+          </Suspense>
+        </ProgressBarProvider>
       </body>
     </html>
   );

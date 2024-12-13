@@ -1,4 +1,3 @@
-import { APP_BASE_URL } from "@/config/constants";
 import { SessionInterface } from "@/types/MeetingTypes";
 import { fetchApi } from "@/utils/api";
 import toast from "react-hot-toast";

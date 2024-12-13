@@ -17,6 +17,8 @@ import { Role } from "@huddle01/server-sdk/auth";
 import SpeakersList from "./SidebarViewPorts/SpeakersList";
 import ListenersList from "./SidebarViewPorts/ListenersList";
 import { NestedPeerListIcons } from "@/utils/PeerListIcons";
+import GuestData from "./PeerRole/GuestData";
+import GuestList from "./SidebarViewPorts/GuestList";
 
 type PeersProps = {};
 
@@ -27,10 +29,13 @@ const Peers: React.FC<PeersProps> = () => {
   const { muteEveryone } = useRoom();
   // const requestedPeers = useStore((state) => state.requestedPeers);
 
-  const { peerIds: hostPeerIds } = usePeerIds({ roles: [Role.HOST] });
-  const { peerIds: coHostPeerIds } = usePeerIds({ roles: [Role.CO_HOST] });
-  // const { peerIds: speakerPeerIds } = usePeerIds({ roles: ["speaker"] });
-  const { peerIds: listenerPeerIds } = usePeerIds({ roles: [Role.GUEST] });
+  const { peerIds: hostPeerIds } = usePeerIds({ roles: ["host"] });
+  const { peerIds: coHostPeerIds } = usePeerIds({ roles: ["coHost"] });
+  const { peerIds: speakerPeerIds } = usePeerIds({ roles: ["speaker"] });
+  const { peerIds: listenerPeerIds } = usePeerIds({ roles: ["listener"] });
+  const { peerIds: guestPeerIds } = usePeerIds({ roles: ["guest"] });
+
+  // console.log("listenerPeerIds::: ", listenerPeerIds);
 
   return (
     <div>
@@ -58,22 +63,31 @@ const Peers: React.FC<PeersProps> = () => {
       )}
 
       {/* Speakers */}
-      {/* {(speakerPeerIds.length > 0 || me.role === Role.SPEAKER) && (
+      {(speakerPeerIds.length > 0 || me.role === Role.SPEAKER) && (
         <PeerList
           title="Speakers"
-          count={speakerPeerIds.length + (me.role == "speaker" ? 1 : 0)}
+          // count={speakerPeerIds.length + (me.role == "speaker" ? 1 : 0)}
         >
           <SpeakersList className="mt-5" />
         </PeerList>
-      )} */}
+      )}
 
       {/* listeners */}
-      {(listenerPeerIds.length > 0 || me.role === Role.GUEST) && (
+      {(listenerPeerIds.length > 0 || me.role === Role.LISTENER) && (
         <PeerList
-          title="Guests"
-          count={listenerPeerIds.length + (me.role == "guest" ? 1 : 0)}
+          title="Listeners"
+          // count={listenerPeerIds.length + (me.role == "listeners" ? 1 : 0)}
         >
           <ListenersList className="mt-5" />
+        </PeerList>
+      )}
+
+      {(guestPeerIds.length > 0 || me.role === Role.GUEST) && (
+        <PeerList
+          title="Guests"
+          // count={listenerPeerIds.length + (me.role == "listeners" ? 1 : 0)}
+        >
+          <GuestList className="mt-5" />
         </PeerList>
       )}
     </div>

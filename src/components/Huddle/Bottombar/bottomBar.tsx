@@ -24,6 +24,7 @@ import QuickLinks from "./QuickLinks";
 import { handleRecording, handleStopRecording } from "../HuddleUtils";
 // import { uploadFile } from "@/actions/uploadFile";
 import MobileMenuDropdown from "./MobileMenuDropdown";
+import { Role } from "@huddle01/server-sdk/auth";
 
 const BottomBar = () => {
   const { isAudioOn, enableAudio, disableAudio } = useLocalAudio();
@@ -35,7 +36,9 @@ const BottomBar = () => {
 
   const roomId = params.roomId as string | undefined;
   const { role, metadata, updateMetadata } = useLocalPeer<PeerMetadata>();
-  const { peerIds } = usePeerIds({ roles: ["host", "guest"] });
+  const { peerIds } = usePeerIds({
+    roles: [Role.HOST, Role.CO_HOST, Role.GUEST, Role.LISTENER, Role.SPEAKER],
+  });
 
   const {
     isChatOpen,

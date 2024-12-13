@@ -19,6 +19,7 @@ import clsx from "clsx";
 import { cn } from "@/utils/helpers";
 import { NestedPeerListIcons } from "@/utils/PeerListIcons";
 import { useStudioState } from "@/store/studioState";
+import GuestData from "../PeerRole/GuestData";
 
 interface PeerMetaDatProps {
   isRequested?: boolean;
@@ -35,7 +36,8 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
     host: <HostData peerId={peerId} />,
     coHost: <CoHostData peerId={peerId} />,
     speaker: <SpeakerData peerId={peerId} />,
-    guest: <ListenersData peerId={peerId} />,
+    listeners: <ListenersData peerId={peerId} />,
+    guest: <GuestData peerId={peerId} />,
   } as const;
 
   const { role, metadata, updateRole } = useRemotePeer<{
@@ -56,6 +58,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
           {RoleData.host}
           {RoleData.coHost}
           {RoleData.speaker}
+          {RoleData.listeners}
           {RoleData.guest}
         </>
       );
@@ -103,14 +106,14 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
             : NestedPeerListIcons.inactive.mic}
         </div>
         {/* {role !== "host" || role === "guest" && ( */}
-          <div className="cursor-pointer flex items-center">
-            <Dropdown
-              triggerChild={<div>{NestedPeerListIcons.inactive.more}</div>}
-              align="end"
-            >
-              {role && RoleData[role as keyof typeof RoleData]}
-            </Dropdown>
-          </div>
+        <div className="cursor-pointer flex items-center">
+          <Dropdown
+            triggerChild={<div>{NestedPeerListIcons.inactive.more}</div>}
+            align="end"
+          >
+            {role && RoleData[role as keyof typeof RoleData]}
+          </Dropdown>
+        </div>
         {/* )} */}
       </div>
       {/* )}  */}
