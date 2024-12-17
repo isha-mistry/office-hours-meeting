@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { use, useMemo, useState } from "react";
 
 // Assets
 import { BasicIcons } from "@/utils/BasicIcons";
@@ -19,6 +19,8 @@ import ListenersList from "./SidebarViewPorts/ListenersList";
 import { NestedPeerListIcons } from "@/utils/PeerListIcons";
 import GuestData from "./PeerRole/GuestData";
 import GuestList from "./SidebarViewPorts/GuestList";
+import { useStudioState } from "@/store/studioState";
+import AcceptDenyPeer from "./PeerMetaData/AcceptDenyPeer";
 
 type PeersProps = {};
 
@@ -27,7 +29,7 @@ const Peers: React.FC<PeersProps> = () => {
 
   const me = useLocalPeer();
   const { muteEveryone } = useRoom();
-  // const requestedPeers = useStore((state) => state.requestedPeers);
+  const { requestedPeers } = useStudioState();
 
   const { peerIds: hostPeerIds } = usePeerIds({ roles: ["host"] });
   const { peerIds: coHostPeerIds } = usePeerIds({ roles: ["coHost"] });
@@ -35,35 +37,37 @@ const Peers: React.FC<PeersProps> = () => {
   const { peerIds: listenerPeerIds } = usePeerIds({ roles: ["listener"] });
   const { peerIds: guestPeerIds } = usePeerIds({ roles: ["guest"] });
 
-  // console.log("listenerPeerIds::: ", listenerPeerIds);
+  const uniqueRequestedPeers = useMemo(() => {
+    return [...new Set(requestedPeers)];
+  }, [requestedPeers]);
 
   return (
     <div>
       {me.role === Role.HOST && <MuteMicDiv onClick={muteEveryone} />}
 
-      {/* {requestedPeers.length > 0 && me.role === Role.HOST && (
+      {uniqueRequestedPeers.length > 0 && me.role === Role.HOST && (
         <PeerList className="mt-5" title="Requested to Speak">
-          {requestedPeers.map((peerId) => {
+          {uniqueRequestedPeers.map((peerId) => {
             return <AcceptDenyPeer key={`sidebar-${peerId}`} peerId={peerId} />;
           })}
         </PeerList>
-      )} */}
+      )}
 
       {/* Host */}
-      {(hostPeerIds.length > 0 || me.role === Role.HOST) && (
+      {(hostPeerIds.length > 0 || me.role === "host") && (
         <PeerList title="Host">
           <HostsList className="mt-5" />
         </PeerList>
       )}
       {/* Co-Hosts */}
-      {(coHostPeerIds.length > 0 || me.role === Role.CO_HOST) && (
+      {(coHostPeerIds.length > 0 || me.role === "coHost") && (
         <PeerList title="Co-Hosts">
           <CoHostsList className="mt-5" />
         </PeerList>
       )}
 
       {/* Speakers */}
-      {(speakerPeerIds.length > 0 || me.role === Role.SPEAKER) && (
+      {(speakerPeerIds.length > 0 || me.role === "speaker") && (
         <PeerList
           title="Speakers"
           // count={speakerPeerIds.length + (me.role == "speaker" ? 1 : 0)}
@@ -73,7 +77,7 @@ const Peers: React.FC<PeersProps> = () => {
       )}
 
       {/* listeners */}
-      {(listenerPeerIds.length > 0 || me.role === Role.LISTENER) && (
+      {(listenerPeerIds.length > 0 || me.role === "listener") && (
         <PeerList
           title="Listeners"
           // count={listenerPeerIds.length + (me.role == "listeners" ? 1 : 0)}
@@ -82,7 +86,7 @@ const Peers: React.FC<PeersProps> = () => {
         </PeerList>
       )}
 
-      {(guestPeerIds.length > 0 || me.role === Role.GUEST) && (
+      {(guestPeerIds.length > 0 || me.role === "guest") && (
         <PeerList
           title="Guests"
           // count={listenerPeerIds.length + (me.role == "listeners" ? 1 : 0)}

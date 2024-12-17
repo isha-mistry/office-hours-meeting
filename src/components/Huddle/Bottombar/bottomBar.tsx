@@ -52,6 +52,7 @@ const BottomBar = () => {
     setIsScreenShared,
     meetingRecordingStatus,
     setMeetingRecordingStatus,
+    setPromptView,
   } = useStudioState();
   const { startScreenShare, stopScreenShare, shareStream } =
     useLocalScreenShare({
@@ -134,67 +135,73 @@ const BottomBar = () => {
         </div>
 
         <div className={clsx("flex space-x-2 sm:space-x-3")}>
-          <ButtonWithIcon
-            content={isVideoOn ? "Turn off camera" : "Turn on camera"}
-            onClick={() => {
-              if (isVideoOn) {
-                disableVideo();
-              } else {
-                enableVideo();
-              }
-            }}
-            className={clsx(
-              isVideoOn ? "bg-gray-500" : "bg-red-500 hover:bg-red-400"
-            )}
-          >
-            {isVideoOn ? BasicIcons.on.cam : BasicIcons.off.cam}
-          </ButtonWithIcon>
-          <ButtonWithIcon
-            content={isAudioOn ? "Turn off microphone" : "Turn on microphone"}
-            onClick={() => {
-              if (isAudioOn) {
-                disableAudio();
-              } else {
-                enableAudio();
-              }
-            }}
-            className={clsx(
-              isAudioOn ? "bg-gray-500" : "bg-red-500 hover:bg-red-400"
-            )}
-          >
-            {isAudioOn ? BasicIcons.on.mic : BasicIcons.off.mic}
-          </ButtonWithIcon>
-          <ButtonWithIcon
-            content={
-              isScreenShared && shareStream !== null
-                ? "Stop Sharing"
-                : shareStream !== null
-                ? "Stop Sharing"
-                : isScreenShared
-                ? "Only one screen share is allowed at a time"
-                : "Share Screen"
-            }
-            onClick={() => {
-              if (isScreenShared && shareStream !== null) {
-                stopScreenShare();
-              } else if (isScreenShared) {
-                toast.error("Only one screen share is allowed at a time");
-                return;
-              }
-              if (shareStream !== null) {
-                stopScreenShare();
-              } else {
-                startScreenShare();
-              }
-            }}
-            className={clsx(
-              `hidden lg:block bg-[#202020] hover:bg-gray-500/50 ${
-                (shareStream !== null || isScreenShared) && "bg-gray-500/80"
-              }`
-            )}
-          >
-            {BasicIcons.screenShare}
-          </ButtonWithIcon>
+          {role !== "listener" && (
+            <>
+              <ButtonWithIcon
+                content={isVideoOn ? "Turn off camera" : "Turn on camera"}
+                onClick={() => {
+                  if (isVideoOn) {
+                    disableVideo();
+                  } else {
+                    enableVideo();
+                  }
+                }}
+                className={clsx(
+                  isVideoOn ? "bg-gray-500" : "bg-red-500 hover:bg-red-400"
+                )}
+              >
+                {isVideoOn ? BasicIcons.on.cam : BasicIcons.off.cam}
+              </ButtonWithIcon>
+              <ButtonWithIcon
+                content={
+                  isAudioOn ? "Turn off microphone" : "Turn on microphone"
+                }
+                onClick={() => {
+                  if (isAudioOn) {
+                    disableAudio();
+                  } else {
+                    enableAudio();
+                  }
+                }}
+                className={clsx(
+                  isAudioOn ? "bg-gray-500" : "bg-red-500 hover:bg-red-400"
+                )}
+              >
+                {isAudioOn ? BasicIcons.on.mic : BasicIcons.off.mic}
+              </ButtonWithIcon>
+              <ButtonWithIcon
+                content={
+                  isScreenShared && shareStream !== null
+                    ? "Stop Sharing"
+                    : shareStream !== null
+                    ? "Stop Sharing"
+                    : isScreenShared
+                    ? "Only one screen share is allowed at a time"
+                    : "Share Screen"
+                }
+                onClick={() => {
+                  if (isScreenShared && shareStream !== null) {
+                    stopScreenShare();
+                  } else if (isScreenShared) {
+                    toast.error("Only one screen share is allowed at a time");
+                    return;
+                  }
+                  if (shareStream !== null) {
+                    stopScreenShare();
+                  } else {
+                    startScreenShare();
+                  }
+                }}
+                className={clsx(
+                  `hidden lg:block bg-[#202020] hover:bg-gray-500/50 ${
+                    (shareStream !== null || isScreenShared) && "bg-gray-500/80"
+                  }`
+                )}
+              >
+                {BasicIcons.screenShare}
+              </ButtonWithIcon>
+            </>
+          )}
           <ButtonWithIcon
             content={metadata?.isHandRaised ? "Lower Hand" : "Raise Hand"}
             onClick={() => {
@@ -336,6 +343,16 @@ const BottomBar = () => {
               </span>
             </Button>
           )}
+
+          {role === "listener" && (
+            <OutlineButton
+              className="mr-auto flex items-center justify-between gap-3"
+              onClick={() => setPromptView("request-to-speak")}
+            >
+              {BasicIcons.requestToSpeak}
+              <div>Request to speak</div>
+            </OutlineButton>
+          )}
           <ButtonWithIcon
             content="Participants"
             onClick={() => setIsParticipantsOpen(!isParticipantsOpen)}
@@ -362,3 +379,23 @@ const BottomBar = () => {
 };
 
 export default BottomBar;
+
+interface OutlineButtonProps {
+  onClick?: () => void;
+  className?: string;
+  children: React.ReactNode;
+}
+
+const OutlineButton: React.FC<OutlineButtonProps> = ({
+  className,
+  onClick,
+  children,
+}) => (
+  <button
+    onClick={onClick}
+    type="button"
+    className={clsx("border border-custom-4 rounded-lg py-2 px-3", className)}
+  >
+    {children}
+  </button>
+);

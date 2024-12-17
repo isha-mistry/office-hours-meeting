@@ -52,6 +52,8 @@ import {
 import { BASE_URL } from "@/config/constants";
 import { Maximize2, Minimize2 } from "lucide-react";
 import AudioController from "@/components/Huddle/Media/AudioController";
+import Prompts from "@/components/ui/Prompts";
+import AcceptRequest from "@/components/Modals/AcceptRequest";
 
 export default function Component() {
   const params = useParams();
@@ -90,6 +92,9 @@ export default function Component() {
     setIsRecording,
     meetingRecordingStatus,
     setMeetingRecordingStatus,
+    setShowAcceptRequest,
+    addRequestedPeers,
+    showAcceptRequest,
   } = useStudioState();
   const videoRef = useRef<HTMLVideoElement>(null);
   const { peerIds } = usePeerIds({
@@ -110,6 +115,7 @@ export default function Component() {
   const meetingCategory = usePathname().split("/")[2];
   const [isLessScreen, setIsLessScreen] = useState(false);
   const [isRemoteLessScreen, setIsRemoteLessScreen] = useState(false);
+  const [requestedPeerId, setRequestedPeerId] = useState("");
 
   const [remoteVideoTracks, setRemoteVideoTracks] = useState<
     Record<string, MediaStreamTrack | null>
@@ -157,6 +163,15 @@ export default function Component() {
 
   useDataMessage({
     async onMessage(payload, from, label) {
+      if (label === "requestToSpeak") {
+        setShowAcceptRequest(true);
+        setRequestedPeerId(from);
+        addRequestedPeers(from);
+        setTimeout(() => {
+          setShowAcceptRequest(false);
+        }, 5000);
+      }
+
       if (label === "chat") {
         const { message, name } = JSON.parse(payload);
         addChatMessage({
@@ -614,6 +629,9 @@ export default function Component() {
             {isChatOpen && <ChatBar />}
             {isParticipantsOpen && <ParticipantsBar />}
           </main>
+          <div className="absolute right-4 bottom-20">
+            {showAcceptRequest && <AcceptRequest peerId={requestedPeerId} />}
+          </div>
           <BottomBar
           // daoName={daoName}
           // hostAddress={hostAddress}
@@ -622,6 +640,7 @@ export default function Component() {
           // meetingData={meetingData}
           // meetingCategory={meetingCategory}
           />
+          <Prompts />
           <AudioController />
         </div>
       </div>

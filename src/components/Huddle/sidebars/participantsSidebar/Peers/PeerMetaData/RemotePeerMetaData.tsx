@@ -36,7 +36,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
     host: <HostData peerId={peerId} />,
     coHost: <CoHostData peerId={peerId} />,
     speaker: <SpeakerData peerId={peerId} />,
-    listeners: <ListenersData peerId={peerId} />,
+    listener: <ListenersData peerId={peerId} />,
     guest: <GuestData peerId={peerId} />,
   } as const;
 
@@ -50,26 +50,6 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
   const { peerId: localPeerId } = useLocalPeer();
 
   // const removeRequestedPeers = useStore((state) => state.removeRequestedPeers);
-
-  const renderRoleData = () => {
-    if (role === "host") {
-      return (
-        <>
-          {RoleData.host}
-          {RoleData.coHost}
-          {RoleData.speaker}
-          {RoleData.listeners}
-          {RoleData.guest}
-        </>
-      );
-    } else if (role === "coHost") {
-      return RoleData.coHost;
-    } else if (role === "speaker") {
-      return RoleData.speaker;
-    } else {
-      return null; // For guest and other roles, do not render anything
-    }
-  };
 
   return (
     <div className={cn(className, "flex items-center justify-between w-full")}>

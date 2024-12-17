@@ -16,7 +16,7 @@ const ListenersData: React.FC<ListenersDataProps> = ({ peerId }) => {
   const { leaveRoom, kickPeer } = useRoom();
   const { updateRole } = useRemotePeer({ peerId });
   const me = useLocalPeer();
-  console.log("role: ", me.role);
+  console.log("local role: ", me.role);
 
   return (
     <>
