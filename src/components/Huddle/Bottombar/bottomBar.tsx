@@ -28,7 +28,11 @@ import { Role } from "@huddle01/server-sdk/auth";
 
 const BottomBar = () => {
   const { isAudioOn, enableAudio, disableAudio } = useLocalAudio();
-  const { isVideoOn, enableVideo, disableVideo } = useLocalVideo();
+  const { isVideoOn, enableVideo, disableVideo, stream } = useLocalVideo({
+    onProduceStart(producer) {
+      console.log(producer);
+    },
+  });
   const [showLeaveDropDown, setShowLeaveDropDown] = useState<boolean>(false);
   const { leaveRoom, closeRoom } = useRoom();
   const [isLoading, setIsLoading] = useState(false);

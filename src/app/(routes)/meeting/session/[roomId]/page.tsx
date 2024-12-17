@@ -404,7 +404,7 @@ export default function Component() {
                         </Button>
                       </Tooltip>
                       <Video
-                        stream={videoStreamTrack}
+                        stream={shareStream}
                         name={metadata?.displayName ?? "guest"}
                       />
                     </>

@@ -24,6 +24,15 @@ const CoHostData: React.FC<CoHostDataProps> = ({ peerId }) => {
       {me.role === "host" && (
         <div>
           <Strip
+            type="personSpeaker"
+            title="Invite as Speaker"
+            variant="normal"
+            onClick={() => {
+              updateRole(Role.SPEAKER);
+            }}
+          />
+          
+          <Strip
             type="remove"
             title="Remove as Co-Host"
             variant="danger"

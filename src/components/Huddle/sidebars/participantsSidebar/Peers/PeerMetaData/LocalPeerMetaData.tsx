@@ -97,18 +97,25 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
             ? NestedPeerListIcons.active.hand
             : NestedPeerListIcons.inactive.hand}
         </div>
-        <div
-          onClick={() => {
-            if (role && ["host", "guest", "speaker", "listener", "coHost"].includes(role)) {
-              isAudioOn ? disableAudio() : enableAudio();
-            }
-          }}
-          className="cursor-pointer"
-        >
-          {isAudioOn
-            ? NestedPeerListIcons.active.mic
-            : NestedPeerListIcons.inactive.mic}
-        </div>
+        {role !== "listener" && (
+          <div
+            onClick={() => {
+              if (
+                role &&
+                ["host", "guest", "speaker", "listener", "coHost"].includes(
+                  role
+                )
+              ) {
+                isAudioOn ? disableAudio() : enableAudio();
+              }
+            }}
+            className="cursor-pointer"
+          >
+            {isAudioOn
+              ? NestedPeerListIcons.active.mic
+              : NestedPeerListIcons.inactive.mic}
+          </div>
+        )}
         {/* {role !== "guest" && ( */}
         <div className="flex items-center cursor-pointer">
           <Dropdown
