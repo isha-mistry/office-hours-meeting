@@ -54,7 +54,7 @@ const Speaker: React.FC<SpeakerDataProps> = ({ peerId }) => {
             title="Leave speaker role"
             variant="danger"
             onClick={() => {
-              updateRole(Role.LISTENER);
+              me.updateRole({ role: "listener" });
             }}
           />
           <Strip

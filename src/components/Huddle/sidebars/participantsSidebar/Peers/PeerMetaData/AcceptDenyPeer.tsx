@@ -38,7 +38,21 @@ const AcceptDenyPeer: FC<AcceptDenyPeerProps> = ({ peerId }) => {
         <div
           role="presentation"
           onClick={() => {
-            updateRole(Role.SPEAKER);
+            updateRole(Role.SPEAKER, {
+              custom: {
+                admin: true,
+                canConsume: true,
+                canProduce: true,
+                canProduceSources: {
+                  cam: true,
+                  mic: true,
+                  screen: true,
+                },
+                canRecvData: true,
+                canSendData: true,
+                canUpdateMetadata: true,
+              },
+            });
             removeRequestedPeers(peerId);
           }}
           className="cursor-pointer"

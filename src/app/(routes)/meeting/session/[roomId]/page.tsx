@@ -630,7 +630,9 @@ export default function Component() {
             {isParticipantsOpen && <ParticipantsBar />}
           </main>
           <div className="absolute right-4 bottom-20">
-            {showAcceptRequest && <AcceptRequest peerId={requestedPeerId} />}
+            {showAcceptRequest && role === "host" && (
+              <AcceptRequest peerId={requestedPeerId} />
+            )}
           </div>
           <BottomBar
           // daoName={daoName}

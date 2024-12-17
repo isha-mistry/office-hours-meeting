@@ -19,7 +19,21 @@ const AcceptRequest: React.FC<AcceptRequestProps> = ({ peerId, onClose }) => {
   const { setShowAcceptRequest, removeRequestedPeers } = useStudioState();
 
   const handleAccept = () => {
-    updateRole(Role.SPEAKER);
+    updateRole(Role.SPEAKER, {
+      custom: {
+        admin: true,
+        canConsume: true,
+        canProduce: true,
+        canProduceSources: {
+          cam: true,
+          mic: true,
+          screen: true,
+        },
+        canRecvData: true,
+        canSendData: true,
+        canUpdateMetadata: true,
+      },
+    });
     setShowAcceptRequest(false);
     removeRequestedPeers(peerId);
     onClose?.();
